@@ -5,7 +5,6 @@ import 'package:github_application_flutter/modules/user/domain/models/user_repos
 import 'package:github_application_flutter/modules/user/domain/repositories/i_user_repository.dart';
 import 'package:github_application_flutter/modules/user/infra/models/user_response.dart';
 import 'package:github_application_flutter/shared/constants.dart';
-import 'package:github_application_flutter/shared/secret_keys.dart';
 
 class UserRepositoryImpl implements IUserRepository {
   Dio _dio;
@@ -17,9 +16,8 @@ class UserRepositoryImpl implements IUserRepository {
   @override
   Future<List<UserResponse>> findByName(String userName) async {
     var usersList = <User>[];
-    final response = await _dio.get(
-        '$apiUrl/search/users?q=${userName.trim().replaceAll(' ', '+')}',
-        options: Options(headers: {'Authorization': githubKey}));
+    final response = await _dio
+        .get('$apiUrl/search/users?q=${userName.trim().replaceAll(' ', '+')}');
     var jsonList = response.data['items'] as List;
     usersList = jsonList.map((user) => UserResponse.fromMap(user)).toList();
 
@@ -28,15 +26,13 @@ class UserRepositoryImpl implements IUserRepository {
 
   @override
   Future<UserResponse> findByUrl(String url) async {
-    final response = await _dio.get(url,
-        options: Options(headers: {'Authorization': githubKey}));
+    final response = await _dio.get(url);
     return UserResponse.fromMap(response.data);
   }
 
   @override
   Future<List<UserRepositories>> getUserRepositories(String url) async {
-    final response = await _dio.get(url,
-        options: Options(headers: {'Authorization': githubKey}));
+    final response = await _dio.get(url);
     return (response.data as List)
         .map((map) => UserRepositories.fromMap(map))
         .toList();
